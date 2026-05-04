@@ -1,29 +1,38 @@
-// Local Data (Phase 1)
-const menuItems = [
-    { name: "Paneer Pizza", price: "₹220", img: "./images/paneer-pizza.jpg" },
-    { name: "Veg Burger", price: "₹120", img: "./images/veg-burger.jpg" },
-    { name: "Veg Pasta", price: "₹180", img: "./images/veg-pasta.jpg" },
-    { name: "Chicken Pizza", price: "₹280", img: "./images/chicken-pizza.jpg" },
-    { name: "Chicken Burger", price: "₹150", img: "./images/chicken-burger.webp" },
-    { name: "Chicken Pasta", price: "₹220", img: "./images/chicken-pasta.jfif" }
-];
+// The URL of your Cloud Database
+const cloudAPI = "https://api.npoint.io/b668944783634b3152fa";
 
-function renderMenu() {
+// Cloud Computing Feature: Fetching data asynchronously from a cloud API
+async function fetchCloudMenu() {
     const menuContainer = document.getElementById("menu-container");
-    menuContainer.innerHTML = ""; 
+    menuContainer.innerHTML = "<h3 style='color: white;'>Connecting to Cloud Database...</h3>";
 
-    menuItems.forEach(item => {
-        const itemCard = document.createElement("div");
-        itemCard.className = "item";
+    try {
+        // Calling the Cloud API
+        const response = await fetch(cloudAPI);
+        const menuItems = await response.json();
         
-        itemCard.innerHTML = `
-            <img src="${item.img}" alt="${item.name}">
-            <h3>${item.name}</h3>
-            <p>${item.price}</p>
-        `;
-        
-        menuContainer.appendChild(itemCard);
-    });
+        // Clear the loading text
+        menuContainer.innerHTML = ""; 
+
+        // Draw the menu using the cloud data
+        menuItems.forEach(item => {
+            const itemCard = document.createElement("div");
+            itemCard.className = "item";
+            
+            itemCard.innerHTML = `
+                <img src="${item.img}" alt="${item.name}">
+                <h3>${item.name}</h3>
+                <p>${item.price}</p>
+            `;
+            
+            menuContainer.appendChild(itemCard);
+        });
+
+    } catch (error) {
+        menuContainer.innerHTML = "<h3 style='color: red;'>Failed to connect to cloud server.</h3>";
+        console.error("Cloud Error:", error);
+    }
 }
 
-document.addEventListener("DOMContentLoaded", renderMenu);
+// Run the cloud fetch function when the page loads
+document.addEventListener("DOMContentLoaded", fetchCloudMenu);
